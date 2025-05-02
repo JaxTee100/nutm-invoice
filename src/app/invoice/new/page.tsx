@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/select';
 
 
-// const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export default function Home() {
   const [form, setForm] = useState({
@@ -65,7 +65,7 @@ export default function Home() {
     };
 
     // POST to your backend (Node.js route)
-    const res = await fetch(`http://localhost:5000/api/invoices`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}/api/invoices`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
