@@ -46,79 +46,119 @@ export default function InvoicePage() {
 
   const generatePDF = (): Blob | undefined => {
     if (!invoice || !logoDataUrl) return;
-  
+
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  
+
     // Add logo (base64 image)
     doc.addImage(logoDataUrl, 'JPG', 14, 10, 30, 15);
-  
+
     // INVOICE heading
     doc.setFontSize(16);
-    doc.setTextColor(34, 139, 34);
+    doc.setTextColor(0, 0, 0);
     doc.setFont('helvetica', 'bold');
-    doc.text('INVOICE', 170, 12);
-  
-    
-  
+    doc.text('INVOICE', 180, 12);
+
+
+
     // Invoice and dates
     doc.setFontSize(10);
-    doc.text(`Invoice Date: January 20, 2025`, 150, 20);
-    doc.text(`Due Date: February 05, 2025`, 150, 25);
+    doc.setTextColor(34, 139, 34);
+    const invoiceDate = new Date();
+    const formattedInvoiceDate = invoiceDate.toLocaleDateString('en-NG', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    doc.text(`Invoice Date: ${formattedInvoiceDate}`, 160, 55);
 
     // Header info
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.setFont('helvetica', 'normal');
-    doc.text('Nigerian University of Technology and Management', 95, 35);
     doc.setFontSize(12);
-    doc.text('6, Freetown Road Apapa Lagos, Nigeria.', 132, 40);
-    doc.text('Email: bursar@nutm.edu.ng', 150, 45);
-  
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Nigerian University of Technology and Management', 100, 35);
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('6, Freetown Road Apapa Lagos, Nigeria.', 140, 40);
+    doc.text('Email: bursar@nutm.edu.ng', 160, 45);
+
     // BILL TO
     doc.setFont('helvetica', 'bold');
-    doc.text('BILL TO', 14, 45);
+    doc.text('BILL TO', 14, 55);
     doc.setFont('helvetica', 'normal');
-    doc.text(`${invoice.studentName}`, 14, 50);
-  
-    
-  
+    doc.text(`${invoice.studentName}`, 14, 60);
+
+
+
     // Amount Due
     doc.setFontSize(12);
-    doc.text(`Amount Due: ₦${Number(invoice.total).toLocaleString()}`, 120, 54);
-  
-    // Table
-    autoTable(doc, {
-      startY: 60,
-      head: [['Description', 'Quantity', 'Rate (₦)', 'Amount (₦)']],
-      body: [
-        ['Tuition Fee balance - Year 1', '1', `${invoice.tuition}`, `${invoice.tuition}`],
-        ['Hostel Fee balance - Year 1', '1', `${invoice.hostelFee && invoice.hostelFee}`, `${invoice.hostelFee}`],
-        ['Hostel Fee balance - Year 1', '1', `${invoice.acceptanceFee && invoice.acceptanceFee}`, `${invoice.acceptanceFee}`],
+    doc.setFont('helvetica', 'bold');
+    doc.text(`Amount Due:`, 140, 64);
+    
+    doc.text(`N${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 168, 64);
+
+
+
+    const tableBody = [
+      [
+        'Tuition Fee balance',
+        '1',
+        Number(invoice.tuition).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        Number(invoice.tuition).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
       ],
-      styles: { fontSize: 10 },
+    ];
+    
+    if (invoice.hostelFee) {
+      const formatted = Number(invoice.hostelFee).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      tableBody.push([
+        'Hostel Fee balance',
+        '1',
+        formatted,
+        formatted
+      ]);
+    }
+    
+    if (invoice.acceptanceFee) {
+      const formatted = Number(invoice.acceptanceFee).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      tableBody.push([
+        'Acceptance Fee balance',
+        '1',
+        formatted,
+        formatted
+      ]);
+    }
+    
+    autoTable(doc, {
+      startY: 69,
+      head: [['Description', 'Quantity', 'Rate (N)', 'Amount (N)']],
+      body: tableBody,
+      styles: { fontSize: 10, cellPadding: { top: 2, right: 2, bottom: 2, left: 2 } },
       headStyles: {
         fillColor: [34, 139, 34],
         textColor: 255,
-        halign: 'left',
+        halign: 'center', // Center aligns headers by default
+        valign: 'middle',
+        fontStyle: 'bold',
       },
       columnStyles: {
-        2: { halign: 'right' },
-        3: { halign: 'right' },
+        0: { halign: 'left', cellWidth: 80 },     // Description
+        1: { halign: 'center', cellWidth: 30 },   // Quantity
+        2: { halign: 'right', cellWidth: 30 },    // Rate
+        3: { halign: 'right', cellWidth: 40 },    // Amount
       },
-      margin: { left: 14, right: 14 },
     });
-  
+    
+
     // Summary: Total and Amount Due
     let y = doc.lastAutoTable.finalY + 10;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
     doc.text('Total', 150, y);
-    doc.text(`${invoice.total}`, 200, y, { align: 'right' });
-  
+    doc.text(`${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 200, y, { align: 'right' });
+
     y += 6;
     doc.text('Amount Due', 150, y);
-    doc.text(`${invoice.total}`, 200, y, { align: 'right' });
-  
+    doc.text(`${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 200, y, { align: 'right' });
+
     // Terms & Conditions
     y += 10;
     doc.setFontSize(11);
@@ -144,7 +184,7 @@ export default function InvoicePage() {
     terms.forEach((line, i) => {
       doc.text(line, 14, y + i * 5);
     });
-  
+
     // Footer note
     y += terms.length * 5 + 10;
     doc.setFontSize(8);
@@ -154,11 +194,11 @@ export default function InvoicePage() {
       14,
       y
     );
-  
+
     doc.save(`invoice-${invoice.invoiceNumber}.pdf`);
     return doc.output('blob');
   };
-  
+
 
   const sendEmail = async () => {
     if (!invoice) return;
@@ -189,7 +229,7 @@ export default function InvoicePage() {
   if (!invoice) return <p className="text-center text-green-700 animate-pulse">Loading Invoice...</p>;
 
   return (
-    <main className="max-w-3xl mx-auto p-6 bg-green-50 rounded-2xl shadow-lg">
+    <main className="max-w-3xl mx-auto p-6   shadow-lg">
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
         <h1 className="text-3xl font-bold text-green-800 mb-6">Invoice for {invoice.studentName}</h1>
 
@@ -217,10 +257,13 @@ export default function InvoicePage() {
               <TableCell>Tuition</TableCell>
               <TableCell>₦{invoice.tuition.toLocaleString()}</TableCell>
             </TableRow>
-            <TableRow>
+            {
+              invoice.hostelFee>0 && <TableRow>
               <TableCell>Hostel</TableCell>
               <TableCell>₦{invoice.hostelFee.toLocaleString()}</TableCell>
             </TableRow>
+            }
+            
             <TableRow>
               <TableCell>Scholarship Discount</TableCell>
               <TableCell className="text-red-500">-₦{invoice.scholarshipDiscount.toLocaleString()}</TableCell>
