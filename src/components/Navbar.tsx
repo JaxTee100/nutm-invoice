@@ -17,9 +17,12 @@ const Navbar = () => {
           priority
         />
       </NextLink>
-      <h1 className='font-bold text-[30px]'>
+      <NextLink href='/invoice'>
+      <h1 className='font-bold text-[30px] hover:text-slate-800'>
         INVOICE
       </h1>
+      </NextLink>
+      
 
 
 

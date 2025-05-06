@@ -93,7 +93,7 @@ export default function InvoicePage() {
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text(`Amount Due:`, 140, 64);
-    
+
     doc.text(`N${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 168, 64);
 
 
@@ -106,7 +106,7 @@ export default function InvoicePage() {
         Number(invoice.tuition).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
       ],
     ];
-    
+
     if (invoice.hostelFee) {
       const formatted = Number(invoice.hostelFee).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       tableBody.push([
@@ -116,7 +116,7 @@ export default function InvoicePage() {
         formatted
       ]);
     }
-    
+
     if (invoice.acceptanceFee) {
       const formatted = Number(invoice.acceptanceFee).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       tableBody.push([
@@ -126,7 +126,7 @@ export default function InvoicePage() {
         formatted
       ]);
     }
-    
+
     autoTable(doc, {
       startY: 69,
       head: [['Description', 'Quantity', 'Rate (N)', 'Amount (N)']],
@@ -146,7 +146,7 @@ export default function InvoicePage() {
         3: { halign: 'right', cellWidth: 40 },    // Amount
       },
     });
-    
+
 
     // Summary: Total and Amount Due
     let y = doc.lastAutoTable.finalY + 10;
@@ -258,12 +258,12 @@ export default function InvoicePage() {
               <TableCell>₦{invoice.tuition.toLocaleString()}</TableCell>
             </TableRow>
             {
-              invoice.hostelFee>0 && <TableRow>
-              <TableCell>Hostel</TableCell>
-              <TableCell>₦{invoice.hostelFee.toLocaleString()}</TableCell>
-            </TableRow>
+              invoice.hostelFee > 0 && <TableRow>
+                <TableCell>Hostel</TableCell>
+                <TableCell>₦{invoice.hostelFee.toLocaleString()}</TableCell>
+              </TableRow>
             }
-            
+
             <TableRow>
               <TableCell>Scholarship Discount</TableCell>
               <TableCell className="text-red-500">-₦{invoice.scholarshipDiscount.toLocaleString()}</TableCell>
@@ -285,11 +285,47 @@ export default function InvoicePage() {
         </div>
 
         <div className="mt-10 p-4 bg-green-100 rounded-xl">
-          <h2 className="text-xl font-semibold text-green-800 mb-2">Payment Account Details</h2>
-          <p><span className="font-medium">Account Name:</span> STEM Institute of Learning Ltd/Gte</p>
-          <p><span className="font-medium">Bank:</span> Union Bank of Nigeria</p>
-          <p><span className="font-medium">Account Number:</span>  0107033739</p>
-          <p className="mt-2 text-sm text-green-700 italic">Please use your registration number as the payment reference.</p>
+          <h2 className='text-slate-900 font-bold '>Terms and Conditions</h2>
+          <ul className="list-decimal list-inside text-gray-800 space-y-4 text-sm leading-relaxed">
+  <li>
+    All fees are listed in naira, unless otherwise stated.
+  </li>
+
+  <li>
+    <p className="font-semibold">Payments should be made according to the following account details for each respective fee type:</p>
+    <ul className="list-disc list-inside pl-4 mt-2 space-y-2 text-gray-700">
+      <li>
+        <span className="font-medium">Accommodation Fee:</span><br />
+        <span className="block ml-4">
+          Bank: Union Bank of Nigeria<br />
+          Account Name: STEM Institute of Learning Ltd/Gte<br />
+          Account Number: 0107033739
+        </span>
+      </li>
+      <li>
+        <span className="font-medium">Acceptance & Tuition Fee:</span><br />
+        <span className="block ml-4">
+          Bank: Zenith Bank Plc.<br />
+          Account Name: STEM Institute of Learning Ltd/Gte<br />
+          Account Number: 1016804002
+        </span>
+      </li>
+    </ul>
+  </li>
+
+  <li>
+    Each student is responsible for ensuring that the total balance on their student account is settled.
+  </li>
+
+  <li>
+    <span className="font-medium">For any inquiries or assistance, please contact:</span><br />
+    <span className="ml-4 block">
+      Email: <a href="mailto:bursar@nutm.edu.ng" className="text-blue-600 underline">bursar@nutm.edu.ng</a><br />
+      Phone: <a href="tel:07064399591" className="text-blue-600 underline">0706 439 9591</a>
+    </span>
+  </li>
+</ul>
+
         </div>
       </motion.div>
     </main>
