@@ -46,17 +46,17 @@ export default function InvoicePage() {
 
   const generatePDF = (): Blob | undefined => {
     if (!invoice || !logoDataUrl) return;
-  
+
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-  
+
     // === Header: Logo and Title ===
     doc.addImage(logoDataUrl, 'JPG', 14, 10, 58, 22); // Left aligned logo
-  
+
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
     doc.text('INVOICE', 196, 12, { align: 'right' }); // Right aligned invoice title
-  
+
     // === Invoice Date ===
     const invoiceDate = new Date();
     const formattedInvoiceDate = invoiceDate.toLocaleDateString('en-NG', {
@@ -64,29 +64,29 @@ export default function InvoicePage() {
       month: 'long',
       day: 'numeric',
     });
-  
+
     doc.setFontSize(10);
     doc.setTextColor(34, 139, 34);
     doc.text(`Invoice Date: ${formattedInvoiceDate}`, 192, 67, { align: 'right' });
-  
+
     // === Institution Header Info ===
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.setFont('helvetica', 'bold');
     doc.text('Nigerian University of Technology and Management', 105, 41, { align: 'center' });
-  
+
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.text('6, Freetown Road Apapa Lagos, Nigeria.', 105, 46, { align: 'center' });
     doc.text('Email: bursar@nutm.edu.ng', 105, 52, { align: 'center' });
-  
+
     // === BILL TO Section ===
     doc.setFont('helvetica', 'bold');
     doc.text('BILL TO:', 14, 64);
-  
+
     doc.setFont('helvetica', 'normal');
     doc.text(`${invoice.studentName.toUpperCase()}`, 14, 69);
-  
+
     // // === Amount Due Summary ===
     // doc.setFontSize(12);
     // doc.setFont('helvetica', 'bold');
@@ -97,7 +97,7 @@ export default function InvoicePage() {
     //   67,
     //   { align: 'right' }
     // );
-  
+
     // === Table: Line Items ===
     const tableBody = [
       [
@@ -113,7 +113,7 @@ export default function InvoicePage() {
         }),
       ],
     ];
-  
+
     if (invoice.hostelFee) {
       const formatted = Number(invoice.hostelFee).toLocaleString(undefined, {
         minimumFractionDigits: 2,
@@ -121,7 +121,7 @@ export default function InvoicePage() {
       });
       tableBody.push(['Hostel Fee balance', '1', formatted, formatted]);
     }
-  
+
     if (invoice.acceptanceFee) {
       const formatted = Number(invoice.acceptanceFee).toLocaleString(undefined, {
         minimumFractionDigits: 2,
@@ -129,7 +129,7 @@ export default function InvoicePage() {
       });
       tableBody.push(['Acceptance Fee balance', '1', formatted, formatted]);
     }
-  
+
     autoTable(doc, {
       startY: 75,
       head: [['Description', 'Quantity', 'Rate (N)', 'Amount (N)']],
@@ -149,7 +149,7 @@ export default function InvoicePage() {
         3: { halign: 'right', cellWidth: 40 },
       },
     });
-  
+
     // === Summary: Total and Amount Due ===
     let y = doc.lastAutoTable.finalY + 10;
     doc.setFont('helvetica', 'bold');
@@ -161,7 +161,7 @@ export default function InvoicePage() {
       y,
       { align: 'right' }
     );
-  
+
     y += 6;
     doc.text('Amount Due:', 146, y);
     doc.text(
@@ -170,14 +170,14 @@ export default function InvoicePage() {
       y,
       { align: 'right' }
     );
-  
+
     // === Terms & Conditions ===
     y += 10;
     doc.setFontSize(11);
     doc.text('TERMS & CONDITIONS', 14, y);
-  
+
     y += 6;
-    doc.setFontSize(9);
+    doc.setFontSize(12);
     const terms = [
       '1. All fees are listed in naira, unless otherwise stated.',
       '2. Payments should be made according to the following account details:',
@@ -197,7 +197,7 @@ export default function InvoicePage() {
     terms.forEach((line, i) => {
       doc.text(line, 14, y + i * 5);
     });
-  
+
     // === Footer Note ===
     y += terms.length * 5 + 10;
     doc.setFontSize(8);
@@ -207,12 +207,12 @@ export default function InvoicePage() {
       14,
       y
     );
-  
+
     // === Save File ===
     doc.save(`invoice-${invoice.invoiceNumber}.pdf`);
     return doc.output('blob');
   };
-  
+
 
 
   const sendEmail = async () => {
@@ -266,7 +266,7 @@ export default function InvoicePage() {
             </TableRow>
             <TableRow>
               <TableCell>Program</TableCell>
-              <TableCell>{invoice.program.toUpperCase()}</TableCell>
+              <TableCell>{invoice.program}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Tuition</TableCell>
@@ -301,45 +301,46 @@ export default function InvoicePage() {
 
         <div className="mt-10 p-4 bg-green-100 rounded-xl">
           <h2 className='text-slate-900 font-bold '>Terms and Conditions</h2>
-          <ul className="list-decimal list-inside text-gray-800 space-y-4 text-sm leading-relaxed">
-  <li>
-    All fees are listed in naira, unless otherwise stated.
-  </li>
+          <ul className="list-decimal list-inside text-gray-800 space-y-4  leading-relaxed">
+            <li className='lg:text-lg'>
+              All fees are listed in naira, unless otherwise stated.
+            </li>
 
-  <li>
-    <p className="font-semibold">Payments should be made according to the following account details for each respective fee type:</p>
-    <ul className="list-disc list-inside pl-4 mt-2 space-y-2 text-gray-700">
-      <li>
-        <span className="font-medium">Accommodation Fee:</span><br />
-        <span className="block ml-4">
-          Bank: Union Bank of Nigeria<br />
-          Account Name: STEM Institute of Learning Ltd/Gte<br />
-          Account Number: 0107033739
-        </span>
-      </li>
-      <li>
-        <span className="font-medium">Acceptance & Tuition Fee:</span><br />
-        <span className="block ml-4">
-          Bank: Zenith Bank Plc.<br />
-          Account Name: STEM Institute of Learning Ltd/Gte<br />
-          Account Number: 1016804002
-        </span>
-      </li>
-    </ul>
-  </li>
+            <li className='text-lg'>
+            Payments should be made according to the following account details for each respective fee type:
+                <ul className="list-disc list-inside pl-4 mt-2 space-y-2 text-gray-700">
+                <li>
+                  <span className="font-semibold lg:text-lg">Accommodation Fee:</span><br />
+                  <span className="block font-bold lg:text-lg ml-4">
+                    Bank: Union Bank of Nigeria<br />
+                    Account Name: STEM Institute of Learning Ltd/Gte<br />
+                    Account Number: 0107033739
+                  </span>
+                </li>
+                <li>
+                  <span className="font-semibold mb-3 lg:text-lg">Acceptance & Tuition Fee:</span><br />
+                  <span className="block font-bold lg:text-lg ml-4">
+                    Bank: Zenith Bank Plc.<br />
+                    Account Name: STEM Institute of Learning Ltd/Gte<br />
+                    Account Number: 1016804002
+                  </span>
+                </li>
+              </ul>
+            
+            </li>
 
-  <li>
-    Each student is responsible for ensuring that the total balance on their student account is settled.
-  </li>
+            <li className='lg:text-lg'>
+              Each student is responsible for ensuring that the total balance on their student account is settled.
+            </li>
 
-  <li>
-    <span className="font-medium">For any inquiries or assistance, please contact:</span><br />
-    <span className="ml-4 block">
-      Email: <a href="mailto:bursar@nutm.edu.ng" className="text-blue-600 underline">bursar@nutm.edu.ng</a><br />
-      Phone: <a href="tel:07064399591" className="text-blue-600 underline">0706 439 9591</a>
-    </span>
-  </li>
-</ul>
+            <li className='lg:text-lg'>
+              <span className="font-medium">For any inquiries or assistance, please contact:</span><br />
+              <span className="ml-4 block">
+                Email: <a href="mailto:bursar@nutm.edu.ng" className="text-blue-600 underline">bursar@nutm.edu.ng</a><br />
+                Phone: <a href="tel:07064399591" className="text-blue-600 underline">0706 439 9591</a>
+              </span>
+            </li>
+          </ul>
 
         </div>
       </motion.div>
