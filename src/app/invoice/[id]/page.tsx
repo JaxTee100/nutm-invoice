@@ -46,128 +46,141 @@ export default function InvoicePage() {
 
   const generatePDF = (): Blob | undefined => {
     if (!invoice || !logoDataUrl) return;
-
+  
     const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-
-    // Add logo (base64 image)
-    doc.addImage(logoDataUrl, 'JPG', 14, 10, 30, 15);
-
-    // INVOICE heading
+  
+    // === Header: Logo and Title ===
+    doc.addImage(logoDataUrl, 'JPG', 14, 10, 58, 22); // Left aligned logo
+  
     doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
     doc.setFont('helvetica', 'bold');
-    doc.text('INVOICE', 180, 12);
-
-
-
-    // Invoice and dates
-    doc.setFontSize(10);
-    doc.setTextColor(34, 139, 34);
+    doc.setTextColor(0, 0, 0);
+    doc.text('INVOICE', 196, 12, { align: 'right' }); // Right aligned invoice title
+  
+    // === Invoice Date ===
     const invoiceDate = new Date();
     const formattedInvoiceDate = invoiceDate.toLocaleDateString('en-NG', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     });
-    doc.text(`Invoice Date: ${formattedInvoiceDate}`, 160, 55);
-
-    // Header info
+  
+    doc.setFontSize(10);
+    doc.setTextColor(34, 139, 34);
+    doc.text(`Invoice Date: ${formattedInvoiceDate}`, 192, 67, { align: 'right' });
+  
+    // === Institution Header Info ===
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.setFont('helvetica', 'bold');
-    doc.text('Nigerian University of Technology and Management', 100, 35);
+    doc.text('Nigerian University of Technology and Management', 105, 41, { align: 'center' });
+  
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text('6, Freetown Road Apapa Lagos, Nigeria.', 140, 40);
-    doc.text('Email: bursar@nutm.edu.ng', 160, 45);
-
-    // BILL TO
+    doc.text('6, Freetown Road Apapa Lagos, Nigeria.', 105, 46, { align: 'center' });
+    doc.text('Email: bursar@nutm.edu.ng', 105, 52, { align: 'center' });
+  
+    // === BILL TO Section ===
     doc.setFont('helvetica', 'bold');
-    doc.text('BILL TO', 14, 55);
+    doc.text('BILL TO:', 14, 64);
+  
     doc.setFont('helvetica', 'normal');
-    doc.text(`${invoice.studentName}`, 14, 60);
-
-
-
-    // Amount Due
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`Amount Due:`, 140, 64);
-
-    doc.text(`N${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 168, 64);
-
-
-
+    doc.text(`${invoice.studentName.toUpperCase()}`, 14, 69);
+  
+    // // === Amount Due Summary ===
+    // doc.setFontSize(12);
+    // doc.setFont('helvetica', 'bold');
+    // doc.text('Amount Due:', 133, 67);
+    // doc.text(
+    //   `N${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+    //   193,
+    //   67,
+    //   { align: 'right' }
+    // );
+  
+    // === Table: Line Items ===
     const tableBody = [
       [
         'Tuition Fee balance',
         '1',
-        Number(invoice.tuition).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-        Number(invoice.tuition).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        Number(invoice.tuition).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }),
+        Number(invoice.tuition).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }),
       ],
     ];
-
+  
     if (invoice.hostelFee) {
-      const formatted = Number(invoice.hostelFee).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      tableBody.push([
-        'Hostel Fee balance',
-        '1',
-        formatted,
-        formatted
-      ]);
+      const formatted = Number(invoice.hostelFee).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      tableBody.push(['Hostel Fee balance', '1', formatted, formatted]);
     }
-
+  
     if (invoice.acceptanceFee) {
-      const formatted = Number(invoice.acceptanceFee).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      tableBody.push([
-        'Acceptance Fee balance',
-        '1',
-        formatted,
-        formatted
-      ]);
+      const formatted = Number(invoice.acceptanceFee).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      tableBody.push(['Acceptance Fee balance', '1', formatted, formatted]);
     }
-
+  
     autoTable(doc, {
-      startY: 69,
+      startY: 75,
       head: [['Description', 'Quantity', 'Rate (N)', 'Amount (N)']],
       body: tableBody,
       styles: { fontSize: 10, cellPadding: { top: 2, right: 2, bottom: 2, left: 2 } },
       headStyles: {
         fillColor: [34, 139, 34],
         textColor: 255,
-        halign: 'center', // Center aligns headers by default
+        halign: 'center',
         valign: 'middle',
         fontStyle: 'bold',
       },
       columnStyles: {
-        0: { halign: 'left', cellWidth: 80 },     // Description
-        1: { halign: 'center', cellWidth: 30 },   // Quantity
-        2: { halign: 'right', cellWidth: 30 },    // Rate
-        3: { halign: 'right', cellWidth: 40 },    // Amount
+        0: { halign: 'left', cellWidth: 80 },
+        1: { halign: 'center', cellWidth: 30 },
+        2: { halign: 'right', cellWidth: 30 },
+        3: { halign: 'right', cellWidth: 40 },
       },
     });
-
-
-    // Summary: Total and Amount Due
+  
+    // === Summary: Total and Amount Due ===
     let y = doc.lastAutoTable.finalY + 10;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
-    doc.text('Total', 150, y);
-    doc.text(`${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 200, y, { align: 'right' });
-
+    doc.text('Total:', 146, y);
+    doc.text(
+      `${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      193,
+      y,
+      { align: 'right' }
+    );
+  
     y += 6;
-    doc.text('Amount Due', 150, y);
-    doc.text(`${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 200, y, { align: 'right' });
-
-    // Terms & Conditions
+    doc.text('Amount Due:', 146, y);
+    doc.text(
+      `${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      193,
+      y,
+      { align: 'right' }
+    );
+  
+    // === Terms & Conditions ===
     y += 10;
     doc.setFontSize(11);
     doc.text('TERMS & CONDITIONS', 14, y);
+  
     y += 6;
     doc.setFontSize(9);
     const terms = [
-      '1. All fees are listed in naira, unless otherwise stated',
-      '2. Payments should be made according to the following account details for each respective fee type:',
+      '1. All fees are listed in naira, unless otherwise stated.',
+      '2. Payments should be made according to the following account details:',
       '   Accommodation Fee:',
       '   Bank: Union Bank of Nigeria',
       '   Account Name: STEM Institute of Learning Ltd/Gte',
@@ -176,16 +189,16 @@ export default function InvoicePage() {
       '   Bank: Zenith Bank Plc.',
       '   Account Name: STEM Institute of Learning Ltd/Gte',
       '   Account Number: 1016804002',
-      '3. Each student is responsible for ensuring that the total balance on their student account is settled.',
-      '4. For any inquiries or assistance, please contact:',
+      '3. Each student is responsible for ensuring their total balance is settled.',
+      '4. For inquiries, please contact:',
       '   Email: bursar@nutm.edu.ng',
       '   Phone: 07064399591',
     ];
     terms.forEach((line, i) => {
       doc.text(line, 14, y + i * 5);
     });
-
-    // Footer note
+  
+    // === Footer Note ===
     y += terms.length * 5 + 10;
     doc.setFontSize(8);
     doc.setTextColor(0, 0, 0);
@@ -194,10 +207,12 @@ export default function InvoicePage() {
       14,
       y
     );
-
+  
+    // === Save File ===
     doc.save(`invoice-${invoice.invoiceNumber}.pdf`);
     return doc.output('blob');
   };
+  
 
 
   const sendEmail = async () => {
@@ -251,7 +266,7 @@ export default function InvoicePage() {
             </TableRow>
             <TableRow>
               <TableCell>Program</TableCell>
-              <TableCell>{invoice.program}</TableCell>
+              <TableCell>{invoice.program.toUpperCase()}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Tuition</TableCell>
