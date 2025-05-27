@@ -185,7 +185,7 @@ export default function Home() {
             )}
 
             <Button
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold cursor-pointer"
               onClick={generateInvoice}
             >
               Generate Invoice
