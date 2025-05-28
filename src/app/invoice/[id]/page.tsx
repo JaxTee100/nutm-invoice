@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { motion } from 'framer-motion';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import Link from 'next/link';
 
 declare module 'jspdf' {
   interface jsPDF {
@@ -177,7 +178,7 @@ export default function InvoicePage() {
     doc.text('TERMS & CONDITIONS', 14, y);
 
     y += 6;
-    doc.setFontSize(12);
+    doc.setFontSize(10);
     const terms = [
       '1. All fees are listed in naira, unless otherwise stated.',
       '2. Payments should be made according to the following account details:',
@@ -244,9 +245,18 @@ export default function InvoicePage() {
   if (!invoice) return <p className="text-center text-green-700 animate-pulse">Loading Invoice...</p>;
 
   return (
-    <main className="max-w-3xl mx-auto p-6   shadow-lg">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-        <h1 className="text-3xl font-bold text-green-800 mb-6">Invoice for {invoice.studentName}</h1>
+    <main className="flex flex-col justify-center items-center gap-6">
+
+      <Link href={'/invoice/new'} className=' w-full max-w-3xl flex justify-end'>
+        <Button className='bg-slate-700 text-white font-semibold  hover:bg-slate-500 cursor-pointer'>Create New Invoice</Button>
+      </Link>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }} className='max-w-3xl mx-auto p-6  shadow-lg'>
+
+        <h1 className="text-2xl font-bold text-green-800 mb-6">Invoice for {invoice.studentName}</h1>
+
+
+
+
 
         <Table>
           <TableHeader>
@@ -307,8 +317,8 @@ export default function InvoicePage() {
             </li>
 
             <li className='text-lg'>
-            Payments should be made according to the following account details for each respective fee type:
-                <ul className="list-disc list-inside pl-4 mt-2 space-y-2 text-gray-700">
+              Payments should be made according to the following account details for each respective fee type:
+              <ul className="list-disc list-inside pl-4 mt-2 space-y-2 text-gray-700">
                 <li>
                   <span className="font-semibold lg:text-lg">Accommodation Fee:</span><br />
                   <span className="block font-bold lg:text-lg ml-4">
@@ -326,7 +336,7 @@ export default function InvoicePage() {
                   </span>
                 </li>
               </ul>
-            
+
             </li>
 
             <li className='lg:text-lg'>

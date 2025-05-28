@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 
 interface Invoice {
   _id: string;
@@ -56,6 +57,10 @@ const InvoicesPage = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
+      
+      <Link href={'/invoice/new'} className=' w-full  flex justify-end'>
+        <Button className='bg-slate-700 text-white font-semibold  hover:bg-slate-500 cursor-pointer'>Create New Invoice</Button>
+      </Link>
       <motion.h1
         initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
