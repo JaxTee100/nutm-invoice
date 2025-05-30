@@ -195,22 +195,63 @@ export default function InvoicePage() {
       '   Email: bursar@nutm.edu.ng',
       '   Phone: 07064399591',
     ];
+
     terms.forEach((line, i) => {
-      doc.text(line, 14, y + i * 5);
+      const yPos = y + i * 5;
+    
+      const accountDetailMatch = line.match(/^\s*(Bank:|Account Name:|Account Number:)\s*(.*)$/);
+      const shouldIndent = line.trim().startsWith('Accommodation Fee:') ||
+                           line.trim().startsWith('Acceptance & Tuition Fee:') ||
+                           accountDetailMatch;
+    
+      const xPos = shouldIndent ? 20 : 14;
+    
+      if (accountDetailMatch) {
+        const label = accountDetailMatch[1];
+        const value = accountDetailMatch[2];
+    
+        doc.setFont('helvetica', 'bold');
+        doc.text(label, xPos, yPos);
+    
+        const labelWidth = doc.getTextWidth(label);
+        const extraSpacing = 2;
+    
+        doc.setFont('helvetica', 'normal');
+        doc.text(value, xPos + labelWidth + extraSpacing, yPos);
+      } else {
+        doc.setFont('helvetica', 'normal');
+        doc.text(line, xPos, yPos);
+      }
     });
 
-    // === Footer Note ===
-    y += terms.length * 5 + 10;
-    doc.setFontSize(8);
-    doc.setTextColor(0, 0, 0);
-    doc.text(
-      'STEM Institute of Learning Ltd/Gte is the promoter of the Nigerian University of Technology and Management',
-      14,
-      y
-    );
+   // === Footer Note at the Bottom ===
+const pageWidth = 210; // A4 width in mm
+const footerHeight = 10;
+const footerText =
+  'STEM Institute of Learning Ltd/Gte is the promoter of the Nigerian University of Technology and Management';
+const footerFontSize = 8;
+
+// Y-position: bottom of A4 minus margin
+const footerY = 297 - 4;
+
+// Set background rectangle
+doc.setFillColor(0, 0, 0); // black
+doc.rect(0, footerY - 3, pageWidth, footerHeight, 'F'); // 'F' = fill
+
+// Set footer text
+doc.setFontSize(footerFontSize);
+doc.setTextColor(255, 255, 255); // white
+doc.setFont('helvetica', 'normal');
+
+// Center the text horizontally
+const textWidth = doc.getTextWidth(footerText);
+const centerX = (pageWidth - textWidth) / 2;
+
+doc.text(footerText, centerX, footerY);
+
 
     // === Save File ===
-    doc.save(`invoice-${invoice.invoiceNumber}.pdf`);
+    doc.save(`invoice-${invoice.studentName}.pdf`);
     return doc.output('blob');
   };
 
