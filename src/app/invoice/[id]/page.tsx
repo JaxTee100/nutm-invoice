@@ -102,7 +102,7 @@ export default function InvoicePage() {
     // === Table: Line Items ===
     const tableBody = [
       [
-        'Tuition Fee balance',
+        'Tuition Fee',
         '1',
         Number(invoice.tuition).toLocaleString(undefined, {
           minimumFractionDigits: 2,
@@ -123,13 +123,13 @@ export default function InvoicePage() {
       tableBody.push(['Hostel Fee balance', '1', formatted, formatted]);
     }
 
-    if (invoice.acceptanceFee) {
-      const formatted = Number(invoice.acceptanceFee).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-      tableBody.push(['Acceptance Fee balance', '1', formatted, formatted]);
-    }
+    // if (invoice.acceptanceFee) {
+    //   const formatted = Number(invoice.acceptanceFee).toLocaleString(undefined, {
+    //     minimumFractionDigits: 2,
+    //     maximumFractionDigits: 2,
+    //   });
+    //   tableBody.push(['Acceptance Fee balance', '1', formatted, formatted]);
+    // }
 
     autoTable(doc, {
       startY: 75,
@@ -155,16 +155,24 @@ export default function InvoicePage() {
     let y = doc.lastAutoTable.finalY + 10;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
-    doc.text('Total:', 146, y);
+    doc.text('Total:', 132, y);
     doc.text(
-      `${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      `${Number(invoice.tuition).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       193,
       y,
       { align: 'right' }
     );
 
     y += 6;
-    doc.text('Amount Due:', 146, y);
+    doc.text('Scholarship Discount:', 132, y);
+    doc.text(
+      `${Number(invoice.scholarshipDiscount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      193,
+      y,
+      { align: 'right' }
+    );
+    y += 6;
+    doc.text('Amount Due:', 132, y);
     doc.text(
       `${Number(invoice.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       193,

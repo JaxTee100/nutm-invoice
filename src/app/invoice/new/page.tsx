@@ -53,7 +53,7 @@ export default function Home() {
 
     const percentage = form.scholarship ? form.scholarshipAmount : 0;
     const scholarshipDiscount = (percentage / 100) * tuition;
-    const total = tuition + acceptanceFee + hostelFee - scholarshipDiscount;
+    const total = tuition  + hostelFee - scholarshipDiscount;
 
     const invoiceData = {
       ...form,
