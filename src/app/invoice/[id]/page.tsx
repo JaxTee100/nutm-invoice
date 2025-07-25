@@ -360,10 +360,10 @@ doc.text(footerText, centerX, footerY);
         </Table>
 
         <div className="mt-6 flex gap-4">
-          <Button onClick={generatePDF} className="bg-green-600 hover:bg-green-700 text-white">
+          <Button onClick={generatePDF} className="bg-green-600 hover:bg-green-700 text-white cursor-pointer">
             Download PDF
           </Button>
-          <Button onClick={sendEmail} className="bg-green-800 hover:bg-green-900 text-white">
+          <Button onClick={sendEmail} className="bg-green-800 hover:bg-green-900 text-white cursor-pointer">
             Send Email
           </Button>
         </div>

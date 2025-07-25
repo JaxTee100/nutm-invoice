@@ -113,7 +113,7 @@ const InvoicesPage = () => {
                       </Link> */}
                       <button
                         onClick={() => handleDelete(invoice._id)}
-                        className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition duration-200"
+                        className="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition duration-200 cursor-pointer"
                       >
                         Delete
                       </button>
