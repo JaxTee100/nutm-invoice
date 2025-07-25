@@ -137,7 +137,7 @@ export default function InvoicePage() {
       body: tableBody,
       styles: { fontSize: 10, cellPadding: { top: 2, right: 2, bottom: 2, left: 2 } },
       headStyles: {
-        fillColor: [34, 139, 34],
+        fillColor: [0, 158, 91], // green
         textColor: 255,
         halign: 'center',
         valign: 'middle',
@@ -197,32 +197,50 @@ export default function InvoicePage() {
     ];
 
     terms.forEach((line, i) => {
-      const yPos = y + i * 5;
-    
-      const accountDetailMatch = line.match(/^\s*(Bank:|Account Name:|Account Number:)\s*(.*)$/);
-      const shouldIndent = line.trim().startsWith('Accommodation Fee:') ||
-                           line.trim().startsWith('Acceptance & Tuition Fee:') ||
-                           accountDetailMatch;
-    
-      const xPos = shouldIndent ? 20 : 14;
-    
-      if (accountDetailMatch) {
-        const label = accountDetailMatch[1];
-        const value = accountDetailMatch[2];
-    
-        doc.setFont('helvetica', 'bold');
-        doc.text(label, xPos, yPos);
-    
-        const labelWidth = doc.getTextWidth(label);
-        const extraSpacing = 2;
-    
-        doc.setFont('helvetica', 'normal');
-        doc.text(value, xPos + labelWidth + extraSpacing, yPos);
-      } else {
-        doc.setFont('helvetica', 'normal');
-        doc.text(line, xPos, yPos);
-      }
-    });
+  const yPos = y + i * 5;
+
+  const accountDetailMatch = line.match(/^\s*(Bank:|Account Name:|Account Number:)\s*(.*)$/);
+  const shouldIndent = line.trim().startsWith('Accommodation Fee:') ||
+                       line.trim().startsWith('Acceptance & Tuition Fee:') ||
+                       accountDetailMatch;
+
+  const xPos = shouldIndent ? 20 : 14;
+
+  // Special styling for "Accommodation Fee:"
+  if (line.trim() === 'Accommodation Fee:') {
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 160, 89); // green
+    doc.text(line.trim(), xPos, yPos);
+    doc.setTextColor(0, 0, 0); // reset to black
+    return;
+  }
+  if (line.trim() === 'Acceptance & Tuition Fee:') {
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 160, 89); // green
+    doc.text(line.trim(), xPos, yPos);
+    doc.setTextColor(0, 0, 0); // reset to black
+    return;
+  }
+
+  if (accountDetailMatch) {
+    const label = accountDetailMatch[1];
+    const value = accountDetailMatch[2];
+
+    doc.setFont('helvetica', 'bold');
+    doc.text(label, xPos, yPos);
+
+    const labelWidth = doc.getTextWidth(label);
+    const extraSpacing = 2;
+
+    doc.setFont('helvetica', 'normal');
+    doc.text(value, xPos + labelWidth + extraSpacing, yPos);
+  } else {
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(0, 0, 0); // ensure default black
+    doc.text(line, xPos, yPos);
+  }
+});
+
 
    // === Footer Note at the Bottom ===
 const pageWidth = 210; // A4 width in mm
