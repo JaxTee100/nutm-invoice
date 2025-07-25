@@ -42,7 +42,6 @@ export default function Home() {
 
     if (form.program === 'undergraduate') {
       tuition = 2000000;
-      acceptanceFee = tuition * 0.1;
     } else if (form.program === 'postgraduate') {
       tuition = form.paymentPlan === 'installment' ? 2000000 : 8000000;
     }
