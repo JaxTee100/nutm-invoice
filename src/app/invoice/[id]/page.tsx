@@ -67,7 +67,7 @@ export default function InvoicePage() {
     });
 
     doc.setFontSize(10);
-    doc.setTextColor(34, 139, 34);
+    doc.setTextColor(0, 158, 91);
     doc.text(`Invoice Date: ${formattedInvoiceDate}`, 192, 67, { align: 'right' });
 
     // === Institution Header Info ===
